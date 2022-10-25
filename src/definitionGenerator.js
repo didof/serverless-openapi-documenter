@@ -266,11 +266,29 @@ class DefinitionGenerator {
                 .catch(err => {
                     throw err
                 })
+            
+            if(response.responseHeaders) {
+                obj.headers = await this.createResponseHeaders(response.responseHeaders)
+                    .catch(err => {
+                        throw err
+                    })
+            }
 
             Object.assign(responses,{[response.statusCode]: obj})
         }
 
         return responses
+    }
+    
+    async createResponseHeaders(models) {
+        const headers = {}
+        for(const model of models) {
+            headers[model.name] = {
+                schema: model.schema,
+                description: model.description
+            }
+        }
+        return headers
     }
 
     async createRequestBody(documentation) {
